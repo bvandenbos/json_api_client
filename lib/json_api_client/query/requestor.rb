@@ -16,7 +16,7 @@ module JsonApiClient
 
       def update(record)
         request(:patch, resource_path(record.attributes), {
-          data: record.data
+          data: record.data_for_update
         })
       end
 
