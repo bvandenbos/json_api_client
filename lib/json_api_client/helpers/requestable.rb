@@ -26,20 +26,21 @@ module JsonApiClient
       end
 
       def save
-        if persisted?
+        result_set = if persisted?
           self.class.requestor.update(self)
         else
           self.class.requestor.create(self)
-        end.tap do |result_set|
-          if result_set.has_errors?
-            self.errors = result_set.errors
-          else
-            self.errors.clear if self.errors
-            mark_as_persisted!
-            if updated = result_set.first
-              self.attributes = updated.attributes
-            end
+        end
+        if result_set.has_errors?
+          self.errors = result_set.errors
+          false
+        else
+          self.errors.clear if self.errors
+          mark_as_persisted!
+          if updated = result_set.first
+            self.attributes = updated.attributes
           end
+          true
         end
       end
 
